@@ -1,0 +1,28 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Spotify
+
+```{r}
+library(spotifyr)
+library(tidyverse)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+```{r}
+Sys.setenv(SPOTIFY_CLIENT_ID = "052dec7a99bd42e888548b0f32f5d444")
+Sys.setenv(SPOTIFY_CLIENT_SECRET = "3e61d71877f2486fa2a17c703eb452a6")
+access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_ID'), client_secret = Sys.getenv('SPOTIFY_CLIENT_SECRET'))
+```
+
+```{r}
+joy <- get_artist_audio_features("Iron Maiden")
+```
+
+get_artist_albums(6mdiAmATAx73kdxrNrnlao, include_groups = c("album", "single", "appears_on",
+  "compilation")

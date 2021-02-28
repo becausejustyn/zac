@@ -1,0 +1,175 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Taylor info lol
+
+#for later
+taylor_with_lyrics <- read_csv("~/Downloads/tayloR-master/taylor_with_lyrics.csv")
+
+```{r}
+## Get data
+taylor <- get_artist_audio_features('taylor swift')
+
+# Reorder columns 
+taylor <- taylor %>%
+  dplyr::relocate(album_name, .before = artist_id) %>%
+  dplyr::relocate(track_name, .before = artist_name)
+
+#View the album names so you can remove the ones you don't want
+taylor %>%
+  dplyr::distinct(album_name)
+
+#List to keep
+album_list <- paste(c("Taylor Swift", "Fearless Platinum Edition", "Speak Now", "Red", "1989", "reputation", "Lover", "folklore", "evermore"))
+
+#List of words in song titles to remove
+remove_list <- paste(c("Demo Recording", "Karaoke Version", "Pop Version", "Acoustic Version", "Commentary", "Medley", "Instrumental", 
+                       "Live From", "Edit", "Mix", "Radio", "Live/","Piano Version"), collapse = '|')
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+```{r}
+#Create tibble
+taylor_filtered <- taylor %>%
+  as_tibble()
+
+#Remove albums you don't want
+taylor_filtered <- taylor_filtered %>%
+  dplyr::filter(album_name %in% album_list)
+
+#Removing songs, might want to get back to this with stringr
+taylor_filtered <- taylor_filtered %>%
+  filter(!grepl(remove_list, track_name))
+
+#Removing duplicates
+taylor_filtered <- taylor_filtered %>%
+  dplyr::distinct(track_name, .keep_all = TRUE)
+```
+spotify_filt
+
+intersect
+
+```{r}
+dplyr::intersect(spotify_filt$name, taylor_filtered$track_name)
+```
+
+
+```{r}
+#fixing the album name
+taylor_filtered <- taylor_filtered %>%
+  dplyr::mutate(across("album_name", str_replace, "Fearless Platinum Edition", "Fearless"))
+
+#checking if it worked
+taylor_filtered %>%
+  dplyr::distinct(album_name)
+
+#Not all the album names are in the same format, capitalising them
+
+taylor_filtered <- taylor_filtered %>%
+  dplyr::mutate(across("album_name", stringr::str_to_title))
+
+#The same with song titles
+taylor_filtered <- taylor_filtered %>%
+  dplyr::mutate(across("track_name", stringr::str_to_title))
+
+```
+
+
+```{r}
+#check for missing data
+sum(is.na(taylor_filtered))
+
+#remove track_preview_url since we don't need it anyway
+taylor_filtered <- taylor_filtered %>%
+  dplyr::select(-track_preview_url)
+
+sum(is.na(taylor_filtered))
+```
+
+
+#Track pop
+```{r}
+spotify1 <- read_csv("~/Downloads/19332_Spotify_Songs.csv")
+spotify2 <- read_csv("~/Downloads/data.csv")
+spotify3 <- read_csv("~/Downloads/Master Song CSV.csv")
+spotify4 <- read_csv("~/Downloads/archive/data.csv")
+spotify5 <- read_csv("~/Downloads/spotify_songs.csv")
+```
+
+```{r}
+#This has it mixed in the artists column
+dim(spotify1)
+head(spotify1)
+
+spotify1 %>%
+  dplyr::filter(artists %in% str_subset(artists, "Taylor Swift")) %>%
+  dplyr::distinct(name)
+
+#101
+###
+
+dim(spotify2)
+head(spotify2)
+
+spotify2_filt <- spotify2 %>%
+  dplyr::filter(artists %in% str_subset(artists, "Taylor Swift")) %>%
+  dplyr::distinct(name, .keep_all = TRUE)
+
+dim(spotify4)
+head(spotify4)
+
+spotify4_filt <- spotify4 %>%
+  dplyr::filter(artists %in% str_subset(artists, "Taylor Swift")) %>%
+  dplyr::distinct(name, .keep_all = TRUE)
+
+spotify_filt <- bind_rows(spotify2_filt, spotify4_filt) %>% #because of this I can use distinct. union would work if I didn't combine it
+  dplyr::distinct(name, .keep_all = TRUE)
+
+dplyr::union(spotify4_filt$name, spotify2_filt$name) #this does the same, but would only save it as a vector
+  
+```
+
+
+
+
+
+```{r}
+spotify_filt <- spotify_filt %>%
+  dplyr::mutate(artists = str_replace_all(artists, "\\'|\\[|\\]", ""))
+
+spotify_filt <- spotify_filt %>%
+  dplyr::relocate(artists, .before = acousticness) %>%
+  dplyr::relocate(name, .before = artists) 
+
+#Need to add column for album, do it by year?  
+
+spotify_filt <- spotify_filt %>%
+  dplyr::filter(!grepl(remove_list, name))
+```
+
+```{r}
+#Save in case
+
+sub6 <- str_subset(spotify6$artists, "Taylor Swift")
+dplyr::filter(artists %in% sub6)
+```
+
+
+E
+
+```{r}
+
+tay_playlist <- get_playlist_audio_features("b7iflt2s6um28zx952r2rp1q9", "5MhycXBWZlAbAKSot7d0Xe")
+
+swift_bind2
+
+tay_playlist1 <- tay_playlist %>%
+  dplyr::select(track.name, track.popularity) %>%
+  dplyr::mutate(artists = "Taylor Swift")
+
+
+```
+

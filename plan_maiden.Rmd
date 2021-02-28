@@ -1,0 +1,135 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Plan
+
+
+Start with Iron Maiden
+
+You will want to compare some albums. Maybe just discography?
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+iron_maiden_lyrics <- read_csv("iron_maiden_lyrics.csv")
+
+```
+
+
+```{r}
+playlist3 <- get_playlist_audio_features("b7iflt2s6um28zx952r2rp1q9","12fnBe9fV0JvVtSg3SPSmW")
+
+maiden_all <- playlist3 %>%
+  dplyr::select(track.artists, track.name, track.popularity, track.album.name, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, valence, tempo, time_signature, track.duration_ms, key_name, mode_name, key_mode, track.id, track.album.id, track.album.release_date, track.album.release_date_precision)
+
+maiden_all <- maiden_all %>%
+  dplyr::rename(artist = track.artists) %>%
+  dplyr::rename(track = track.name) %>%
+  dplyr::rename(popularity = track.popularity) %>%
+  dplyr::rename(album_name = track.album.name) %>%
+  dplyr::rename(duration_ms = track.duration_ms) %>%
+  dplyr::rename(track_id = track.id) %>%
+  dplyr::rename(album_id = track.album.id) %>%
+  dplyr::rename(album_release_date = track.album.release_date) %>%
+  dplyr::rename(album_release_date_precision = track.album.release_date_precision)
+
+maiden_all1 <- maiden_all %>%
+  dplyr::mutate(across("track", str_replace, "- 2015 Remaster", ""))
+```
+- 2015 Remaster
+dplyr::mutate(across("track", str_replace, "- 2015 Remaster", ""))
+
+dplyr::union(iron_maiden_lyrics$track, maiden_all2$track)
+
+#Lyrics
+```{r}
+iron_maiden_lyrics <- iron_maiden_lyrics %>%
+  dplyr::rename(track = musica) %>%
+  dplyr::rename(lyrics = letras)
+```
+
+album_name contains remaster
+
+```{r}
+maiden_all2 <- maiden_all1 %>%
+  dplyr::filter(album_name %in% str_subset(album_name, "Remaster")) %>%
+  mutate(across(track, str_trim))
+```
+
+mutate(across(where(is.character), str_trim))
+mutate(across(where(is.character), str_trim))
+mutate(across(track, str_trim))
+
+
+str_replace_all(x, fixed(" "), "")
+
+```{r}
+dplyr::union(iron_maiden_lyrics$track, maiden_all2$track)
+
+maiden_all2$track <- str_trim(maiden_all2$track, side = "right")
+
+#Get both in the same format
+
+iron_maiden_lyrics <- iron_maiden_lyrics %>%
+  dplyr::mutate(across("track", stringr::str_to_title))
+
+maiden_all2 <- maiden_all2 %>%
+  dplyr::mutate(across("track", stringr::str_to_title))
+
+test <- dplyr::union(iron_maiden_lyrics$track, maiden_all2$track)
+```
+
+```{r}
+iron_maiden_lyrics <- iron_maiden_lyrics %>%
+  dplyr::distinct(track, .keep_all = TRUE)
+
+iron_maiden_lyrics1 <- iron_maiden_lyrics
+```
+
+```{r}
+iron_maiden_lyrics <- iron_maiden_lyrics %>%
+  dplyr::mutate(across("track", str_replace, "2 A.m.", "2 Am"))
+
+iron_maiden_lyrics <- iron_maiden_lyrics %>%
+  dplyr::filter(!grepl(remove_songs1, track)) %>%
+  dplyr::arrange(track)
+
+
+
+remove_songs <- paste(c("Churchill's Speech","Cross-Eyed Mary","Virus","Total Eclipse","Sanctuary","Massacre","Intro: Churchill's Speech","Intro: Aces High"))
+remove_songs1 <- paste(c("Churchill's Speech","Cross-Eyed Mary","Virus","Total Eclipse","Sanctuary","Massacre","Intro: Churchill's Speech","Intro: Aces High"), collapse = '|')      
+  
+
+```
+
+```{r}
+maiden_all3 <- maiden_all2 %>%
+  dplyr::mutate(across("track", str_replace, "\\(", "")) %>%
+  dplyr::mutate(across("track", str_replace, "\\)", "")) %>%
+  dplyr::mutate(across("track", str_replace, "356-323 B.c.", "")) %>%
+  dplyr::mutate(across("track", str_replace, "Satellite 15.....The Final Frontier", "Satellite 15... The Final Frontier"))
+
+maiden_all3 <- maiden_all3 %>%
+  dplyr::arrange(track)
+```
+
+Cbind
+```{r}
+combined <- maiden_all3 %>%
+  add_column(iron_maiden_lyrics$lyrics)
+
+write_csv(combined1, "iron_maiden_audio_plus_lyrics.csv")
+```
+
+```{r}
+combined1 <- combined1 %>%
+  dplyr::select(-artist) 
+
+
+
+```
+
